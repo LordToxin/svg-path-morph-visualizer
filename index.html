@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MorphSVG Studio Pro | Interactive SVG Path Morphing & Keyframes Generator</title>
+  <meta name="description" content="Generate smooth SVG path morphing animations, equalize anchor points, and export pure CSS keyframes, SMIL SVG, and JS animation code.">
+  <meta property="og:title" content="MorphSVG Studio Pro - SVG Path Morphing & Animator">
+  <meta property="og:description" content="Smooth SVG shape transitions with automatic point subdivision, live scrubbing, and multi-format animation exports.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+          <path d="M12 2a10 10 0 0 1 10 10"></path>
+          <circle cx="12" cy="12" r="4"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">
+          MorphSVG Studio
+          <span class="brand-tag">Pro v1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <button id="copy-code-btn" class="btn btn-primary" title="Copy active code">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        Copy Code
+      </button>
+      <button id="download-svg-btn" class="btn btn-secondary" title="Export standalone animated SVG">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export SVG
+      </button>
+      <button id="reset-btn" class="btn btn-secondary">Reset</button>
+    </div>
+  </header>
+
+  <!-- Presets Bar -->
+  <div class="presets-bar">
+    <span class="presets-label">Icon Pairs:</span>
+    <button class="preset-chip active" data-preset="playPause">Play ▷ / Pause ⏸</button>
+    <button class="preset-chip" data-preset="menuClose">Menu ☰ / Close ✕</button>
+    <button class="preset-chip" data-preset="heartStar">Heart ♡ / Star ⭐</button>
+    <button class="preset-chip" data-preset="sunMoon">Sun ☀️ / Moon 🌙</button>
+    <button class="preset-chip" data-preset="checkCross">Checkmark ✓ / Cross ✗</button>
+  </div>
+
+  <!-- Studio Grid -->
+  <div class="studio-grid">
+    <!-- Left Controls -->
+    <aside class="controls-sidebar">
+      <div class="section-box">
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Start Path (Shape A)
+        </div>
+        <textarea id="input-path-a" class="path-input" placeholder="SVG 'd' data for shape A..."></textarea>
+      </div>
+
+      <div class="section-box">
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          Target Path (Shape B)
+        </div>
+        <textarea id="input-path-b" class="path-input" placeholder="SVG 'd' data for shape B..."></textarea>
+      </div>
+
+      <!-- Point Optimization Stats -->
+      <div class="stats-row">
+        <span>Path A Segments: <strong id="stat-points-a">0</strong></span>
+        <span>Path B Segments: <strong id="stat-points-b">0</strong></span>
+        <span>Equalized Segments: <strong id="stat-equalized-points">0</strong></span>
+      </div>
+
+      <!-- Visual Styles -->
+      <div class="section-box">
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 0 0 20"></path></svg>
+          Visual Styling & Guides
+        </div>
+
+        <div class="style-grid">
+          <div class="form-group">
+            <label class="form-label" for="input-stroke-color">Stroke Color</label>
+            <div class="color-picker-row">
+              <input type="color" id="input-stroke-color" value="#06b6d4">
+              <span class="text-xs text-slate-400">Outline</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-fill-color">Fill Color</label>
+            <div class="color-picker-row">
+              <input type="color" id="input-fill-color" value="#10b981">
+              <span class="text-xs text-slate-400">Surface</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 6px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+            <label for="input-stroke-width" style="color: var(--text-muted);">Stroke Width</label>
+            <span id="val-stroke-width" style="color: var(--accent-cyan); font-family: var(--font-mono);">3px</span>
+          </div>
+          <input type="range" id="input-stroke-width" min="0" max="10" step="0.5" value="3">
+        </div>
+
+        <div class="form-group" style="margin-top: 10px; margin-bottom: 0;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.825rem; color: #cbd5e1; cursor: pointer;">
+            <input type="checkbox" id="toggle-handles" checked>
+            <span>Show Anchor Points & Bezier Handles</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Viewport & Code -->
+    <main class="stage-panel">
+      <!-- SVG Viewport Area -->
+      <div class="viewport-area">
+        <div class="svg-stage-wrapper">
+          <svg id="morph-viewport" viewBox="0 0 100 100">
+            <path id="morph-svg-path" d="" stroke="#06b6d4" stroke-width="3" fill="#10b981" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <canvas id="handles-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Playback & Scrubbing Timeline Bar -->
+      <div class="playback-bar">
+        <button id="btn-play" class="btn btn-primary" style="padding: 6px 14px;">⏸ Pause</button>
+
+        <div class="slider-wrapper">
+          <span style="font-size: 0.775rem; color: var(--text-dim); min-width: 55px;">Scrub (t):</span>
+          <input type="range" id="slider-progress" min="0" max="100" value="0">
+          <span id="val-progress" style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-cyan); min-width: 45px;">0%</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <select id="select-easing" class="select-field" style="width: auto;">
+            <option value="easeInOut">Ease In-Out</option>
+            <option value="linear">Linear</option>
+            <option value="elasticOut">Elastic Out</option>
+          </select>
+
+          <select id="select-speed" class="select-field" style="width: auto;">
+            <option value="0.5">0.5x</option>
+            <option value="1.0" selected>1.0x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2.0">2.0x</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Code Drawer -->
+      <div class="code-drawer">
+        <div class="code-drawer-header">
+          <div class="code-tabs">
+            <button class="code-tab-btn active" data-tab="css">CSS Keyframes</button>
+            <button class="code-tab-btn" data-tab="smil">Standalone SMIL SVG</button>
+            <button class="code-tab-btn" data-tab="js">Vanilla Web Animation</button>
+            <button class="code-tab-btn" data-tab="d">Interpolated 'd' Path</button>
+          </div>
+        </div>
+        <pre id="code-output" class="code-box"></pre>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Scripts -->
+  <script src="js/path-optimizer.js"></script>
+  <script src="js/morph-engine.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  morphsvg:
+    build: .
+    image: svg-path-morph-visualizer:latest
+    container_name: morphsvg-studio
+    ports:
+      - "8084:80"
+    restart: unless-stopped

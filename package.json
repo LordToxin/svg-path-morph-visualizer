@@ -1,0 +1,22 @@
+{
+  "name": "svg-path-morph-visualizer",
+  "version": "1.0.0",
+  "description": "Interactive vector SVG path morphing studio, Bézier curve visualizer, and code generator for CSS keyframes, SVG SMIL, and Web Animations API",
+  "main": "server.js",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "svg",
+    "morphing",
+    "bezier",
+    "css-keyframes",
+    "smil",
+    "waapi",
+    "vector-animation",
+    "developer-tools"
+  ],
+  "author": "Max",
+  "license": "MIT"
+}
